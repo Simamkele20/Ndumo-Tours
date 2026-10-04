@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import pool from '../config/database.js';
 import bcrypt from 'bcrypt';
-import jwt, { JwtPayload } from 'jsonwebtoken';
+import jwt, { JwtPayload, Secret } from 'jsonwebtoken';
 import validator from 'validator';
 import { ApiError } from '../middleware/errorHandler.js';
 import { RowDataPacket, OkPacket } from 'mysql2/promise';
@@ -21,12 +21,12 @@ interface JWTPayload extends JwtPayload {
   isAdmin: boolean;
 }
 
-const getSecret = (): string => {
+const getSecret = (): Secret => {
   const secret = process.env.JWT_SECRET || 'secret';
   return secret;
 };
 
-const getRefreshSecret = (): string => {
+const getRefreshSecret = (): Secret => {
   const secret = process.env.JWT_REFRESH_SECRET || 'secret';
   return secret;
 };

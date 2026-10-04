@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import jwt, { JwtPayload } from 'jsonwebtoken';
+import jwt, { JwtPayload, Secret } from 'jsonwebtoken';
 
 interface JWTPayload extends JwtPayload {
   id: number;
@@ -15,7 +15,7 @@ declare global {
   }
 }
 
-const getSecret = (): string => {
+const getSecret = (): Secret => {
   return process.env.JWT_SECRET || 'secret';
 };
 
