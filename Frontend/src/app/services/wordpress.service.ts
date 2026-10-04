@@ -96,12 +96,4 @@ export class WordPressService {
     const endpoint = `${this.apiUrl}/../contact-form`;
     return this.http.post(endpoint, data);
   }
-
-  /**
-   * Login user with email and password
-   */
-  login(email: string, password: string): Promise<any> {
-    const endpoint = `${this.apiUrl}/auth/login`;
-    return this.http.post<any>(endpoint, { email, password }).toPromise();
-  }
 }
