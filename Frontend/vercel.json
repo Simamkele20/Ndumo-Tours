@@ -1,0 +1,12 @@
+{
+  "framework": "Next.js",
+  "buildCommand": "npm run build",
+  "devCommand": "ng serve",
+  "outputDirectory": "dist/ndumo-tours-angular",
+  "env": {
+    "VITE_API_URL": {
+      "required": true
+    }
+  },
+  "regions": ["sfo1"]
+}

@@ -1,0 +1,30 @@
+{
+  "name": "ndumo-tours-workspace",
+  "version": "1.0.0",
+  "description": "Ndumo Tours - Full Stack Application (Angular + Express + PostgreSQL)",
+  "private": true,
+  "scripts": {
+    "install:all": "npm install && cd ndumo-tours-backend && npm install && cd ../ndumo-tours-angular && npm install",
+    "dev": "concurrently \"cd ndumo-tours-backend && npm run dev\" \"cd ndumo-tours-angular && ng serve\"",
+    "dev:backend": "cd ndumo-tours-backend && npm run dev",
+    "dev:frontend": "cd ndumo-tours-angular && ng serve",
+    "build:backend": "cd ndumo-tours-backend && npm run build",
+    "build:frontend": "cd ndumo-tours-angular && ng build",
+    "build:all": "npm run build:backend && npm run build:frontend",
+    "start:backend": "cd ndumo-tours-backend && npm start",
+    "test:backend": "cd ndumo-tours-backend && npm test",
+    "test:frontend": "cd ndumo-tours-angular && ng test"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "keywords": [
+    "ndumo",
+    "tours",
+    "angular",
+    "express",
+    "postgresql"
+  ],
+  "author": "Ndumo Tours",
+  "license": "MIT"
+}
