@@ -4,6 +4,16 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import validator from 'validator';
 import { ApiError } from '../middleware/errorHandler.js';
+import { RowDataPacket, OkPacket } from 'mysql2/promise';
+
+interface User extends RowDataPacket {
+  id: number;
+  email: string;
+  password_hash: string;
+  name: string;
+  phone?: string;
+  is_admin: boolean;
+}
 
 export async function register(req: Request, res: Response) {
   try {
@@ -23,8 +33,8 @@ export async function register(req: Request, res: Response) {
     }
 
     // Check if user exists
-    const [existingUser] = await pool.query('SELECT id FROM users WHERE email = ?', [email]);
-    if (existingUser.length > 0) {
+    const [existingUsers] = await pool.query<RowDataPacket[]>('SELECT id FROM users WHERE email = ?', [email]);
+    if (existingUsers.length > 0) {
       throw new ApiError(409, 'User already exists with this email');
     }
 
@@ -32,13 +42,14 @@ export async function register(req: Request, res: Response) {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create user
-    const [result] = await pool.query(
+    const [result] = await pool.query<OkPacket>(
       'INSERT INTO users (email, password_hash, name, phone, is_admin) VALUES (?, ?, ?, ?, ?)',
       [email, hashedPassword, name, phone || null, false]
     );
 
     // Fetch the created user
-    const [[user]] = await pool.query('SELECT id, email, name FROM users WHERE id = ?', [result.insertId]);
+    const [users] = await pool.query<User[]>('SELECT id, email, name FROM users WHERE id = ?', [result.insertId]);
+    const user = users[0];
 
     // Generate JWT
     const token = jwt.sign(
@@ -71,16 +82,16 @@ export async function login(req: Request, res: Response) {
     }
 
     // Find user
-    const [result] = await pool.query(
+    const [results] = await pool.query<User[]>(
       'SELECT id, email, password_hash, name, is_admin FROM users WHERE email = ?',
       [email]
     );
 
-    if (result.length === 0) {
+    if (results.length === 0) {
       throw new ApiError(401, 'Invalid email or password');
     }
 
-    const user = result[0];
+    const user = results[0];
 
     // Verify password
     const passwordMatch = await bcrypt.compare(password, user.password_hash);

@@ -1,12 +1,17 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 
-interface AuthRequest extends Request {
-  user?: { id: string; email: string; isAdmin: boolean };
+declare global {
+  namespace Express {
+    interface Request {
+      user?: { id: string; email: string; isAdmin: boolean };
+    }
+  }
 }
 
-export function verifyToken(req: AuthRequest, res: Response, next: NextFunction) {
-  const token = req.headers.authorization?.split(' ')[1];
+export function verifyToken(req: Request, res: Response, next: NextFunction) {
+  const authHeader = req.headers.authorization;
+  const token = authHeader?.split(' ')[1];
 
   if (!token) {
     return res.status(401).json({ error: 'No token provided' });
@@ -21,7 +26,7 @@ export function verifyToken(req: AuthRequest, res: Response, next: NextFunction)
   }
 }
 
-export function verifyAdmin(req: AuthRequest, res: Response, next: NextFunction) {
+export function verifyAdmin(req: Request, res: Response, next: NextFunction) {
   verifyToken(req, res, () => {
     if (!req.user?.isAdmin) {
       return res.status(403).json({ error: 'Access denied: Admin only' });
