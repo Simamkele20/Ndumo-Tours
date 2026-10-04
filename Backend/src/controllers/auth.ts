@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import pool from '../config/database.js';
 import bcrypt from 'bcrypt';
-import jwt, { JwtPayload, Secret } from 'jsonwebtoken';
+import jwt, { JwtPayload, SignOptions } from 'jsonwebtoken';
 import validator from 'validator';
 import { ApiError } from '../middleware/errorHandler.js';
 import { RowDataPacket, OkPacket } from 'mysql2/promise';
@@ -20,16 +20,6 @@ interface JWTPayload extends JwtPayload {
   email: string;
   isAdmin: boolean;
 }
-
-const getSecret = (): Secret => {
-  const secret = process.env.JWT_SECRET || 'secret';
-  return secret;
-};
-
-const getRefreshSecret = (): Secret => {
-  const secret = process.env.JWT_REFRESH_SECRET || 'secret';
-  return secret;
-};
 
 export async function register(req: Request, res: Response) {
   try {
@@ -68,10 +58,11 @@ export async function register(req: Request, res: Response) {
     const user = users[0];
 
     // Generate JWT
+    const signOpts: SignOptions = { expiresIn: process.env.JWT_EXPIRE || '7d' };
     const token = jwt.sign(
       { id: user.id, email: user.email, isAdmin: false },
-      getSecret(),
-      { expiresIn: process.env.JWT_EXPIRE || '7d' }
+      process.env.JWT_SECRET || 'secret',
+      signOpts
     );
 
     res.status(201).json({
@@ -116,10 +107,11 @@ export async function login(req: Request, res: Response) {
     }
 
     // Generate JWT
+    const signOpts: SignOptions = { expiresIn: process.env.JWT_EXPIRE || '7d' };
     const token = jwt.sign(
       { id: user.id, email: user.email, isAdmin: user.is_admin },
-      getSecret(),
-      { expiresIn: process.env.JWT_EXPIRE || '7d' }
+      process.env.JWT_SECRET || 'secret',
+      signOpts
     );
 
     res.status(200).json({
@@ -149,12 +141,13 @@ export async function refreshToken(req: Request, res: Response) {
       throw new ApiError(400, 'Refresh token required');
     }
 
-    const decoded = jwt.verify(token, getRefreshSecret()) as JWTPayload;
+    const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET || 'secret') as JWTPayload;
 
+    const signOpts: SignOptions = { expiresIn: process.env.JWT_EXPIRE || '7d' };
     const newToken = jwt.sign(
       { id: decoded.id, email: decoded.email, isAdmin: decoded.isAdmin },
-      getSecret(),
-      { expiresIn: process.env.JWT_EXPIRE || '7d' }
+      process.env.JWT_SECRET || 'secret',
+      signOpts
     );
 
     res.status(200).json({ token: newToken });

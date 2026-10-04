@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import jwt, { JwtPayload, Secret } from 'jsonwebtoken';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 
 interface JWTPayload extends JwtPayload {
   id: number;
@@ -15,10 +15,6 @@ declare global {
   }
 }
 
-const getSecret = (): Secret => {
-  return process.env.JWT_SECRET || 'secret';
-};
-
 export function verifyToken(req: Request, res: Response, next: NextFunction) {
   const authHeader = req.headers.authorization;
   const token = authHeader?.split(' ')[1];
@@ -28,7 +24,7 @@ export function verifyToken(req: Request, res: Response, next: NextFunction) {
   }
 
   try {
-    const decoded = jwt.verify(token, getSecret()) as JWTPayload;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret') as JWTPayload;
     req.user = decoded;
     next();
   } catch (err) {
