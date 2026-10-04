@@ -4,9 +4,11 @@ import { ToursComponent } from './pages/tours/tours.component';
 import { ToursListComponent } from './pages/tours-list/tours-list.component';
 import { AboutComponent } from './pages/about/about.component';
 import { ContactComponent } from './pages/contact/contact.component';
+import { LoginComponent } from './pages/login/login.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
+  { path: 'login', component: LoginComponent },
   { path: 'services', component: ToursComponent },
   { path: 'tours', component: ToursListComponent },
   { path: 'about', component: AboutComponent },

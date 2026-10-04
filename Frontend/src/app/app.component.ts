@@ -84,14 +84,12 @@ import { MatDividerModule } from '@angular/material/divider';
             <!-- CTA Button & Mobile Menu -->
             <div class="toolbar-actions">
               <a
-                href="https://wa.me/27631344422"
-                target="_blank"
-                rel="noopener noreferrer"
+                routerLink="/login"
                 mat-raised-button
                 color="accent"
                 class="cta-button"
               >
-                Book Now
+                Login
               </a>
               <button
                 mat-icon-button
