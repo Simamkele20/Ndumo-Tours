@@ -1,19 +1,21 @@
 {
   "name": "ndumo-tours-workspace",
   "version": "1.0.0",
-  "description": "Ndumo Tours - Full Stack Application (Angular + Express + PostgreSQL)",
+  "description": "Ndumo Tours - Full Stack Application (Angular + Express + MySQL)",
   "private": true,
   "scripts": {
-    "install:all": "npm install && cd ndumo-tours-backend && npm install && cd ../ndumo-tours-angular && npm install",
-    "dev": "concurrently \"cd ndumo-tours-backend && npm run dev\" \"cd ndumo-tours-angular && ng serve\"",
-    "dev:backend": "cd ndumo-tours-backend && npm run dev",
-    "dev:frontend": "cd ndumo-tours-angular && ng serve",
-    "build:backend": "cd ndumo-tours-backend && npm run build",
-    "build:frontend": "cd ndumo-tours-angular && ng build",
+    "install:all": "npm install && cd Backend && npm install && cd ../Frontend && npm install",
+    "start": "concurrently \"cd Backend && npm start\" \"cd Frontend && ng serve\"",
+    "dev": "concurrently \"cd Backend && npm run dev\" \"cd Frontend && ng serve\"",
+    "dev:backend": "cd Backend && npm run dev",
+    "dev:frontend": "cd Frontend && ng serve",
+    "build:backend": "cd Backend && npm run build",
+    "build:frontend": "cd Frontend && ng build",
     "build:all": "npm run build:backend && npm run build:frontend",
-    "start:backend": "cd ndumo-tours-backend && npm start",
-    "test:backend": "cd ndumo-tours-backend && npm test",
-    "test:frontend": "cd ndumo-tours-angular && ng test"
+    "start:backend": "cd Backend && npm start",
+    "start:frontend": "cd Frontend && ng serve",
+    "test:backend": "cd Backend && npm test",
+    "test:frontend": "cd Frontend && ng test"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"
@@ -23,7 +25,10 @@
     "tours",
     "angular",
     "express",
-    "postgresql"
+    "mysql",
+    "cpanel",
+    "render",
+    "vercel"
   ],
   "author": "Ndumo Tours",
   "license": "MIT"

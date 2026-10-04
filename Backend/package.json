@@ -7,9 +7,8 @@
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
-    "start": "node dist/server.js",
-    "dev:full": "concurrently \"npm run dev\" \"npm run dev:frontend\"",
-    "dev:frontend": "cd ../ndumo-tours-angular && npm run start",
+    "start": "tsx src/server.ts",
+    "start:prod": "node dist/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
