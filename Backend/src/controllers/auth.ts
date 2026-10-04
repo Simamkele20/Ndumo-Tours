@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import pool from '../config/database.js';
 import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 import validator from 'validator';
 import { ApiError } from '../middleware/errorHandler.js';
 import { RowDataPacket, OkPacket } from 'mysql2/promise';
@@ -14,6 +14,22 @@ interface User extends RowDataPacket {
   phone?: string;
   is_admin: boolean;
 }
+
+interface JWTPayload extends JwtPayload {
+  id: number;
+  email: string;
+  isAdmin: boolean;
+}
+
+const getSecret = (): string => {
+  const secret = process.env.JWT_SECRET || 'secret';
+  return secret;
+};
+
+const getRefreshSecret = (): string => {
+  const secret = process.env.JWT_REFRESH_SECRET || 'secret';
+  return secret;
+};
 
 export async function register(req: Request, res: Response) {
   try {
@@ -54,7 +70,7 @@ export async function register(req: Request, res: Response) {
     // Generate JWT
     const token = jwt.sign(
       { id: user.id, email: user.email, isAdmin: false },
-      process.env.JWT_SECRET || 'secret',
+      getSecret(),
       { expiresIn: process.env.JWT_EXPIRE || '7d' }
     );
 
@@ -102,7 +118,7 @@ export async function login(req: Request, res: Response) {
     // Generate JWT
     const token = jwt.sign(
       { id: user.id, email: user.email, isAdmin: user.is_admin },
-      process.env.JWT_SECRET || 'secret',
+      getSecret(),
       { expiresIn: process.env.JWT_EXPIRE || '7d' }
     );
 
@@ -127,21 +143,21 @@ export async function login(req: Request, res: Response) {
 
 export async function refreshToken(req: Request, res: Response) {
   try {
-    const { refreshToken } = req.body;
+    const { refreshToken: token } = req.body;
 
-    if (!refreshToken) {
+    if (!token) {
       throw new ApiError(400, 'Refresh token required');
     }
 
-    const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET || 'secret');
+    const decoded = jwt.verify(token, getRefreshSecret()) as JWTPayload;
 
-    const token = jwt.sign(
+    const newToken = jwt.sign(
       { id: decoded.id, email: decoded.email, isAdmin: decoded.isAdmin },
-      process.env.JWT_SECRET || 'secret',
+      getSecret(),
       { expiresIn: process.env.JWT_EXPIRE || '7d' }
     );
 
-    res.status(200).json({ token });
+    res.status(200).json({ token: newToken });
   } catch (err) {
     console.error('Refresh token error:', err);
     res.status(401).json({ error: 'Invalid refresh token' });
