@@ -1,7 +1,5 @@
 {
-  "framework": "Angular",
   "buildCommand": "npm run build",
-  "devCommand": "ng serve",
   "outputDirectory": "dist/ndumo-tours-angular",
   "env": {
     "VITE_API_URL": "https://api.ndumotours.com"
