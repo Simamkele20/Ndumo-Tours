@@ -58,11 +58,10 @@ export async function register(req: Request, res: Response) {
     const user = users[0];
 
     // Generate JWT
-    const signOpts: SignOptions = { expiresIn: process.env.JWT_EXPIRE || '7d' };
     const token = jwt.sign(
       { id: user.id, email: user.email, isAdmin: false },
       process.env.JWT_SECRET || 'secret',
-      signOpts
+      { expiresIn: process.env.JWT_EXPIRE || '7d' } as SignOptions
     );
 
     res.status(201).json({
@@ -107,11 +106,10 @@ export async function login(req: Request, res: Response) {
     }
 
     // Generate JWT
-    const signOpts: SignOptions = { expiresIn: process.env.JWT_EXPIRE || '7d' };
     const token = jwt.sign(
       { id: user.id, email: user.email, isAdmin: user.is_admin },
       process.env.JWT_SECRET || 'secret',
-      signOpts
+      { expiresIn: process.env.JWT_EXPIRE || '7d' } as SignOptions
     );
 
     res.status(200).json({
@@ -143,11 +141,10 @@ export async function refreshToken(req: Request, res: Response) {
 
     const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET || 'secret') as JWTPayload;
 
-    const signOpts: SignOptions = { expiresIn: process.env.JWT_EXPIRE || '7d' };
     const newToken = jwt.sign(
       { id: decoded.id, email: decoded.email, isAdmin: decoded.isAdmin },
       process.env.JWT_SECRET || 'secret',
-      signOpts
+      { expiresIn: process.env.JWT_EXPIRE || '7d' } as SignOptions
     );
 
     res.status(200).json({ token: newToken });
